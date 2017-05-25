@@ -872,7 +872,7 @@ void cpp_typecheckt::typecheck_expr_address_of(exprt &expr)
   const bool is_ref=is_reference(expr.type());
   c_typecheck_baset::typecheck_expr_address_of(expr);
   if(is_ref)
-    expr.type()=reference_typet(expr.type().subtype());
+    expr.type()=reference_type(expr.type().subtype());
 }
 
 /*******************************************************************\

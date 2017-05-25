@@ -6,6 +6,8 @@ Author: Daniel Kroening, kroening@kroening.com
 
 \*******************************************************************/
 
+#include <util/c_types.h>
+
 #include "shared_buffers.h"
 #include "fence.h"
 
@@ -74,7 +76,7 @@ const shared_bufferst::varst &shared_bufferst::operator()(
       object,
       symbol.base_name,
       "$read_delayed_var",
-      pointer_typet(symbol.type));
+      pointer_type(symbol.type));
 
   for(unsigned cnt=0; cnt<nb_threads; cnt++)
   {
@@ -162,7 +164,7 @@ void shared_bufferst::add_initialization(goto_programt &goto_program)
     assignment(goto_program, t, source_location, vars.second.read_delayed,
       false_exprt());
     assignment(goto_program, t, source_location, vars.second.read_delayed_var,
-      null_pointer_exprt(pointer_typet(vars.second.type)));
+      null_pointer_exprt(pointer_type(vars.second.type)));
 
     for(const auto &id : vars.second.r_buff0_thds)
       assignment(goto_program, t, source_location, id, false_exprt());
@@ -1328,7 +1330,7 @@ void shared_bufferst::cfg_visitort::weak_memory(
                     r_it->second.object, vars.type);
                   symbol_exprt new_read_expr=symbol_exprt(
                     vars.read_delayed_var,
-                  pointer_typet(vars.type));
+                    pointer_type(vars.type));
                   symbol_exprt read_delayed_expr=symbol_exprt(
                     vars.read_delayed, bool_typet());
 

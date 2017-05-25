@@ -153,7 +153,7 @@ exprt goto_symext::address_arithmetic(
     }
 
     // do (expr.type() *)(((char *)op)+offset)
-    result=typecast_exprt(result, pointer_typet(char_type()));
+    result=typecast_exprt(result, pointer_type(char_type()));
 
     // there could be further dereferencing in the offset
     exprt offset=be.offset();
@@ -163,14 +163,14 @@ exprt goto_symext::address_arithmetic(
 
     // treat &array as &array[0]
     const typet &expr_type=ns.follow(expr.type());
-    pointer_typet dest_type;
+    typet dest_type_subtype;
 
     if(expr_type.id()==ID_array && !keep_array)
-      dest_type.subtype()=expr_type.subtype();
+      dest_type_subtype=expr_type.subtype();
     else
-      dest_type.subtype()=expr_type;
+      dest_type_subtype=expr_type;
 
-    result=typecast_exprt(result, dest_type);
+    result=typecast_exprt(result, pointer_type(dest_type_subtype));
   }
   else if(expr.id()==ID_index ||
           expr.id()==ID_member)
@@ -253,7 +253,7 @@ exprt goto_symext::address_arithmetic(
 
   const typet &expr_type=ns.follow(expr.type());
   assert((expr_type.id()==ID_array && !keep_array) ||
-         base_type_eq(pointer_typet(expr_type), result.type(), ns));
+         base_type_eq(pointer_type(expr_type), result.type(), ns));
 
   return result;
 }
@@ -324,7 +324,7 @@ void goto_symext::dereference_rec(
     index_exprt index_expr=to_index_expr(expr);
 
     address_of_exprt address_of_expr(index_expr.array());
-    address_of_expr.type()=pointer_typet(expr.type());
+    address_of_expr.type()=pointer_type(expr.type());
 
     dereference_exprt tmp;
     tmp.pointer()=plus_exprt(address_of_expr, index_expr.index());
@@ -361,7 +361,7 @@ void goto_symext::dereference_rec(
        to_address_of_expr(tc_op).object().type().id()==ID_array &&
        base_type_eq(
          expr.type(),
-         pointer_typet(to_address_of_expr(tc_op).object().type().subtype()),
+         pointer_type(to_address_of_expr(tc_op).object().type().subtype()),
          ns))
     {
       expr=
