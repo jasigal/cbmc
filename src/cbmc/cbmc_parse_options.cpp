@@ -1060,7 +1060,6 @@ void cbmc_parse_optionst::help()
     "* *              Daniel Kroening, Edmund Clarke             * *\n"
     "* * Carnegie Mellon University, Computer Science Department * *\n"
     "* *                 kroening@kroening.com                   * *\n"
-    "* *        Protected in part by U.S. patent 7,225,417       * *\n"
     "\n"
     "Usage:                       Purpose:\n"
     "\n"
