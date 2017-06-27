@@ -1269,6 +1269,7 @@ void goto_convertt::convert_switch(
 
   goto_programt tmp_cases;
 
+  size_t case_number=1;
   for(auto &case_pair : targets.cases)
   {
     const caset &case_ops=case_pair.second;
@@ -1276,6 +1277,12 @@ void goto_convertt::convert_switch(
     assert(!case_ops.empty());
 
     exprt guard_expr=case_guard(argument, case_ops);
+    const source_locationt &loc=guard_expr.source_location();
+    loc.set_case_number(std::to_string(case_number));
+    status() << "INFO: set case number " << std::to_string(case_number)
+             << eom;
+    case_number++;
+    guard_expr.add_source_location()=loc;
 
     goto_programt::targett x=tmp_cases.add_instruction();
     x->make_goto(case_pair.first);
