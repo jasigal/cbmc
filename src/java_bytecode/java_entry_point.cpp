@@ -166,6 +166,7 @@ exprt::operandst java_build_arguments(
   bool assume_init_pointers_not_null,
   size_t max_nondet_array_length,
   size_t max_nondet_tree_depth,
+  bool string_printable_enabled,
   const select_pointer_typet &pointer_type_selector)
 {
   const code_typet::parameterst &parameters=
@@ -226,6 +227,20 @@ exprt::operandst java_build_arguments(
         allocation_typet::LOCAL,
         function.location,
         pointer_type_selector);
+
+    if(string_printable_enabled &&
+       p.type()==java_type_from_string("Ljava.lang.String;"))
+    {
+      const std::string name=id2string(ID_cprover_string_printable_func);
+      function_application_exprt printable(
+        symbol_exprt(name.c_str()), bool_typet());
+      exprt::operandst arguments;
+      arguments.reserve(1);
+      arguments.push_back(main_arguments[param_number]);
+      printable.arguments()=arguments;
+      code_assumet printable_call(printable);
+      init_code.move_to_operands(printable_call);
+    }
 
     // record as an input
     codet input(ID_input);
@@ -531,6 +546,7 @@ bool java_entry_point(
   bool assume_init_pointers_not_null,
   size_t max_nondet_array_length,
   size_t max_nondet_tree_depth,
+  bool string_printable_enabled,
   const select_pointer_typet &pointer_type_selector)
 {
   // check if the entry point is already there
@@ -627,6 +643,20 @@ bool java_entry_point(
 
   // create code that allocates the objects used as test arguments and
   // non-deterministically initializes them
+
+  if(string_printable_enabled)
+  {
+    const std::string printable=id2string(ID_cprover_string_printable_func);
+    auxiliary_symbolt func_symbol;
+    func_symbol.base_name=printable;
+    func_symbol.pretty_name=printable;
+    func_symbol.is_static_lifetime=false;
+    func_symbol.mode=ID_java;
+    func_symbol.name=printable;
+    func_symbol.type=bool_typet();
+    symbol_table.add(func_symbol);
+  }
+
   exprt::operandst main_arguments=
     java_build_arguments(
       symbol,
@@ -635,6 +665,7 @@ bool java_entry_point(
       assume_init_pointers_not_null,
       max_nondet_array_length,
       max_nondet_tree_depth,
+      string_printable_enabled,
       pointer_type_selector);
   call_main.arguments()=main_arguments;
 

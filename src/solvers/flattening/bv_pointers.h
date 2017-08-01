@@ -36,7 +36,7 @@ protected:
   virtual void add_addr(const exprt &expr, bvt &bv);
 
   // overloading
-  literalt convert_rest(const exprt &expr) override;
+  virtual literalt convert_rest(const exprt &expr) override;
   bvt convert_bitvector(const exprt &expr) override; // no cache
 
   exprt bv_get_rec(

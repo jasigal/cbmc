@@ -38,6 +38,7 @@ void java_bytecode_languaget::get_language_options(const cmdlinet &cmd)
 {
   assume_inputs_non_null=cmd.isset("java-assume-inputs-non-null");
   string_refinement_enabled=cmd.isset("refine-strings");
+  string_printable_enabled=cmd.isset("string-printable");
   throw_runtime_exceptions=cmd.isset("java-throw-runtime-exceptions");
   if(cmd.isset("java-max-input-array-length"))
     max_nondet_array_length=
@@ -707,6 +708,7 @@ bool java_bytecode_languaget::final(symbol_tablet &symbol_table)
       assume_inputs_non_null,
       max_nondet_array_length,
       max_nondet_tree_depth,
+      string_printable_enabled,
       pointer_type_selector);
 }
 

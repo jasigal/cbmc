@@ -24,6 +24,7 @@ bool java_entry_point(
   bool assume_init_pointers_not_null,
   size_t max_nondet_array_length,
   size_t max_nondet_tree_depth,
+  bool string_printable_enabled,
   const select_pointer_typet &pointer_type_selector);
 
 typedef struct

@@ -63,6 +63,7 @@ protected:
 
   decision_proceduret::resultt dec_solve() override;
 
+  literalt convert_rest(const exprt &expr) override;
   bvt convert_bool_bv(const exprt &boole, const exprt &orig);
 
 private:

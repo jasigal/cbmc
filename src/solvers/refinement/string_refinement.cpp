@@ -27,6 +27,7 @@ Author: Alberto Griggio, alberto.griggio@gmail.com
 #include <util/replace_expr.h>
 #include <util/refined_string_type.h>
 #include <util/simplify_expr.h>
+#include <util/ssa_expr.h>
 #include <solvers/sat/satcheck.h>
 #include <solvers/refinement/string_refinement_invariant.h>
 #include <solvers/refinement/string_constraint_instantiation.h>
@@ -621,6 +622,46 @@ decision_proceduret::resultt string_refinementt::dec_solve()
   debug() << "string_refinementt::dec_solve reached the maximum number"
            << "of steps allowed" << eom;
   return resultt::D_ERROR;
+}
+
+literalt string_refinementt::convert_rest(const exprt &expr)
+{
+  PRECONDITION(expr.type().id()==ID_bool);
+
+  if(expr.id()==ID_function_application)
+  {
+    const function_application_exprt func_app=
+      to_function_application_expr(expr);
+    const exprt name=func_app.function();
+    PRECONDITION(name.id()==ID_symbol);
+
+    const irep_idt &id=is_ssa_expr(name)?to_ssa_expr(name).get_object_name():
+      to_symbol_expr(name).get_identifier();
+    debug() << "func is: " << id << eom;
+    if(id==ID_cprover_string_printable_func)
+    {
+      const exprt::operandst args=func_app.arguments();
+      INVARIANT(
+        args.size()==1,
+        string_refinement_invariantt(
+          "cprover_string_printable_func takes one argument"));
+      INVARIANT(
+        args.back().id()==ID_address_of,
+        string_refinement_invariantt(
+          "cprover_string_printable_func's argument should be the address of "
+          "a string"));
+      const exprt arg=to_address_of_expr(args.back()).object();
+      INVARIANT(
+        arg.id()==ID_symbol,
+        string_refinement_invariantt(
+          "cprover_string_printable_func's argument should be the address of "
+          "a string"));
+      const symbol_exprt str=to_symbol_expr(arg);
+      debug() << "Input string: " << from_expr(ns, "", str) << eom;
+    }
+  }
+
+  return supert::convert_rest(expr);
 }
 
 /// fills as many 0 as necessary in the bit vectors to have the right width

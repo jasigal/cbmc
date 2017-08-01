@@ -108,6 +108,7 @@ protected:
   lazy_methodst lazy_methods;
   lazy_methods_modet lazy_methods_mode;
   bool string_refinement_enabled;
+  bool string_printable_enabled;
   bool throw_runtime_exceptions;
   java_string_library_preprocesst string_preprocess;
   std::string java_cp_include_files;
